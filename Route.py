@@ -17,11 +17,14 @@ class Route:
 
          value += problem_instance[self._route_list[len(self._route_list)-1]][self._route_list[0]]
 
+         return value
 
     def get_route_list(self):
         return self._route_list
+
     def get_value(self):
         return self._value
+
     def set_route_list(self, route_list, problem_instance):
         self._route_list = route_list
         self._value = self.objective_function(problem_instance)
