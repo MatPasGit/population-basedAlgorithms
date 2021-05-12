@@ -3,9 +3,7 @@ from RandomNumberGenerator import RandomNumberGenerator
 
 def instanceGenerator(Z, size):
     generator = RandomNumberGenerator(Z)
-    d = []
     d = [[0 for i in range(size)] for j in range(size)]
-    w = []
     w = [[0 for i in range(size)] for j in range(size)]
 
     for i in range(size):
