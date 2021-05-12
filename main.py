@@ -6,5 +6,7 @@ def main():
     k = c[0][1]
     print(k)
     print("siema")
+    list=[0,1,2,3,4]
+
 
 main()
