@@ -1,8 +1,9 @@
 import time
+import copy
 import numpy as np
 from matplotlib import cm
 import matplotlib.pyplot as plt
-import copy
+import math
 import random
 from RandomNumberGenerator import *
 from scipy.stats import uniform
@@ -28,9 +29,9 @@ class PSO():
     
     _populationList = []
     _speedList = []
-    _localBestList = []
 
-    _globalBest = 0
+    _localBestList = []
+    _globalBest = []
 
     def __init__(self, size, population, iterations, cl, cg):
         self._size = size
@@ -38,11 +39,15 @@ class PSO():
         self._iterations = iterations
         self._cl = cl
         self._cg = cg
+
         self._populationList = [
             [0 for i in range(size)] for j in range(population)]
         self._speedList = [
             [0 for i in range(size)] for j in range(population)]
-        self._localBestList = [0 for i in range(population)]
+
+        self._localBestList = [
+            [0 for i in range(size)] for j in range(population)]
+        self._globalBest = [0 for i in range(size)]
 
     def simplescore(self, permutation):
         score = 0
@@ -52,23 +57,67 @@ class PSO():
 
     def solve(self):
 
-        
+        for i in range(self._size):
+            self._populationList[0][i] = round(uniform.rvs(loc=self._L, scale=self._U-self._L), 5)
 
+        self._localBestList[0] = copy.deepcopy(self._populationList[0])
+        self._globalBest = copy.deepcopy(self._populationList[0])
+        print("Najlepsza: "+str(self._globalBest))
 
+        for i in range(self._size):
+            self._speedList[0][i] = round(uniform.rvs(
+                loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
 
+        for j in range(self._population):
+            if j == 0:
+                continue
+            
+            for i in range(self._size):
+                self._populationList[j][i] = round(uniform.rvs(loc=self._L, scale=self._U-self._L), 5)
+            
+            self._localBestList[j] = copy.deepcopy(self._populationList[j])
 
+            if self.simplescore(self._populationList[j]) < self.simplescore(self._globalBest):
+                self._globalBest = copy.deepcopy(self._populationList[j])
+                print("Najlepsza: "+str(self._globalBest))
 
+            for i in range(self._size):
+                self._speedList[0][i] = round(uniform.rvs(loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
 
+        omega = self._cl+self._cg
+        self._c = 2/math.fabs(2-omega-math.sqrt(omega**2-4*omega))
 
+        for actualIter in range(self._iterations):
 
-        #print(round(uniform.rvs(),5))
-        #uniform.rvs(loc=0,scale=1)
+            self._w = 1-(actualIter+1)/self._iterations
+
+            for j in range(self._population):
+
+                for i in range(self._size):
+
+                    rl = round(uniform.rvs(),5)
+                    rg = round(uniform.rvs(),5)
+                    a = self._w*self._speedList[j][i]
+                    b = self._cl*rl * (self._localBestList[j][i]-self._populationList[j][i])
+                    c = self._cg*rg * (self._globalBest[i]-self._populationList[j][i])
+                    self._speedList[j][i] = a+b+c
+
+                    self._populationList[j][i] = self._populationList[j][i] + self._c*self._speedList[j][i]
+
+                if self.simplescore(self._populationList[j]) < self.simplescore(self._localBestList[j]):
+                    self._localBestList[j] = copy.deepcopy(self._populationList[j])
+
+                if self.simplescore(self._populationList[j]) < self.simplescore(self._globalBest):
+                    self._globalBest = copy.deepcopy(self._populationList[j])
+                    print("Najlepsza: "+str(self._globalBest))
+
+        return self._globalBest
 
 
 #ZMIENNE
 
-n = 20                  #rozmiar problemu
-k = 100                 #liczba czastek
+n = 3                  #rozmiar problemu
+k = 30                 #liczba czastek
 iterations = 1000        #liczba iteracji
 
 #PARAMETRY
@@ -99,5 +148,7 @@ def main():
     x = PSO(n, k, iterations, cl, cg)
     wynik = x.solve()
 
+    print("Koniec: "+str(wynik))
+    print("Wartosc funkcji: "+str(x.simplescore(wynik)))
 
 main()
