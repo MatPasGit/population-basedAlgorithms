@@ -4,7 +4,7 @@ class Route:
 
     _route_list = []
     _value = 0
-
+    _count = 0
     def __init__(self,route_list, problem_instance ):
         self._route_list = route_list
         self._value = self.objective_function(problem_instance)
@@ -28,6 +28,16 @@ class Route:
     def set_route_list(self, route_list, problem_instance):
         self._route_list = route_list
         self._value = self.objective_function(problem_instance)
+
+    def get_count(self):
+        return self._count
+
+    def reset_count(self):
+        self._count = 0
+
+    def increment_count(self):
+        self._count += 1
+
 
 
 
