@@ -5,12 +5,13 @@ from Route import Route
 import random
 import operator
 from cross import Cross
-
+from neighburhood import swaping, backwards
+from random import choices
 
 def main():
     MAX_CHANGE_LIMIT = 10
-    ITERATIONS = 10
-    PROBLEM_SIZE = 8
+    ITERATIONS = 50000
+    PROBLEM_SIZE = 5
     SEED = 20
     PROBLEM_MATRIX = instanceGenerator(SEED, PROBLEM_SIZE)
     CROSS_POINTS = 2
@@ -60,11 +61,15 @@ def main():
 
             if(new_solution.get_value() > BEES_LIST[i].get_value() ):
                 BEES_LIST[i] = copy.deepcopy(new_solution)
+                if new_solution.get_value() > BEST_SOLUTION.get_value():
+                    BEST_SOLUTION = copy.deepcopy(new_solution)
+                    print("NEW BEST")
             else:
                 BEES_LIST[i].increment_count()
                 if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:     ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
                     random.shuffle(init_list)
                     x = Route(copy.deepcopy(init_list), PROBLEM_MATRIX)
+                    BEES_LIST[i] = copy.deepcopy(x)
 
         #POSORTUJ PO ZBIERACZACH
         BEES_LIST.sort(key=operator.attrgetter('_value'))
@@ -86,12 +91,49 @@ def main():
         #print(c)
 
         #OBSERWATORZY
-        choices = []
+        index = []
         for i in range(0, len(BEES_LIST)):
-            choices.append(i)
+            index.append(i)
 
         for i in range(0, len(BEES_LIST)):
-            bee_changer = choices(choices, roulette)
+            bee_change = choices(index, roulette)
+            bee_changer = bee_change[0] #choices zwraca liste i trzeba zrzucic do inta bo inaczej sie nie wywola reszta
 
+            luck = random.randint(0, 1)
+            if luck == 0:
+                x = BEES_LIST[bee_changer]
+                xa = swaping(x.get_route_list())
+                x = Route(xa, PROBLEM_MATRIX)
+                if (x.get_value() > BEES_LIST[bee_changer].get_value()):
+                    BEES_LIST[i] = copy.deepcopy(x)
+                    if x.get_value() > BEST_SOLUTION.get_value():
+                        BEST_SOLUTION = copy.deepcopy(x)
+                        print("NEW BEST")
+                else:
+                    BEES_LIST[i].increment_count()
+                    if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:  ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
+                        random.shuffle(init_list)
+                        x = Route(copy.deepcopy(init_list), PROBLEM_MATRIX)
+                        BEES_LIST[i] = copy.deepcopy(x)
+            else:
+                x = BEES_LIST[bee_changer]
+                xa = backwards(x.get_route_list())
+                x = Route(xa, PROBLEM_MATRIX)
+                if (x.get_value() > BEES_LIST[bee_changer].get_value()): ##Jesli lepsza od istniejacej
+                    BEES_LIST[i] = copy.deepcopy(x)
+                    if x.get_value() > BEST_SOLUTION.get_value():
+                        BEST_SOLUTION = copy.deepcopy(x)
+                        print("NEW BEST")
+                else:
+                    BEES_LIST[i].increment_count()
+                    if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:  ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
+                        random.shuffle(init_list)
+                        x = Route(copy.deepcopy(init_list), PROBLEM_MATRIX)
+                        BEES_LIST[i] = copy.deepcopy(x)
 
+        #POSORTUJ PO OBSERWATORACH
+        BEES_LIST.sort(key=operator.attrgetter('_value'))
+
+    print("BEST WAY THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_value())
+    print("BEST route THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_route_list())
 main()

@@ -2,10 +2,10 @@ import random
 
 
 def swaping(list):
-    a = random.randint(0, len(list))
+    a = random.randint(0, len(list)-1)
     b= 0
     while a !=b:
-        b = random.randint(0, len(list))
+        b = random.randint(0, len(list)-1)
 
     buf = list[a]
     list[a] = list[b]
@@ -13,10 +13,10 @@ def swaping(list):
     return list
 
 def backwards(list):
-    a = random.randint(0, len(list))
+    a = random.randint(0, len(list)-1)
     b = 0
     while a !=b:
-        b = random.randint(0, len(list))
+        b = random.randint(0, len(list)-1)
 
     if (a<b):
         c= []
