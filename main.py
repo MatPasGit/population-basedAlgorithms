@@ -14,6 +14,7 @@ def main():
     PROBLEM_SIZE = 5
     SEED = 20
     PROBLEM_MATRIX = instanceGenerator(SEED, PROBLEM_SIZE)
+    BEES_AMOUNT = 5
     CROSS_POINTS = 2
 
     #INIT SOLUTION
@@ -25,7 +26,7 @@ def main():
     BEST_SOLUTION = Route(init_list, PROBLEM_MATRIX)
 
     # INITIALIZING BEES
-    for i in range(0, PROBLEM_SIZE):
+    for i in range(0, BEES_AMOUNT):
         random.shuffle(init_list)
         x = Route( copy.deepcopy(init_list), PROBLEM_MATRIX)
         if i == 0:
@@ -66,7 +67,7 @@ def main():
                     print("NEW BEST")
             else:
                 BEES_LIST[i].increment_count()
-                if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:     ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
+                if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:     ##ABOVE MAX CHANGE COUNT (Nowy osobnik do populacji)
                     random.shuffle(init_list)
                     x = Route(copy.deepcopy(init_list), PROBLEM_MATRIX)
                     BEES_LIST[i] = copy.deepcopy(x)
@@ -75,19 +76,20 @@ def main():
         BEES_LIST.sort(key=operator.attrgetter('_value'))
 
         #LISTA KOLA RULETKI
-        roulette = [] #dystrybuanta dla indeksów które będą losowane
+        roulette = []                               #dystrybuanta dla indeksów które będą losowane
         probablility = 0
         for i in range(len(BEES_LIST)):
-            probablility += BEES_LIST[i].get_value()
+            new_score = BEES_LIST[len(BEES_LIST)-1].get_value()-BEES_LIST[i].get_value()
+            probablility += new_score
 
         for i in range(len(BEES_LIST)):
-            b = BEES_LIST[i].get_value()
-            roulette.append(( b /probablility) ) #NAPRAWIC KOLO RULETKI
+            b = BEES_LIST[len(BEES_LIST)-1].get_value() - BEES_LIST[i].get_value()
+            roulette.append(( b /probablility) )    #NAPRAWIC KOLO RULETKI
 
         #print("ROULETTE: ", roulette)
         #c = 0
         #for i in range(0, len(roulette)):
-         #   c+= roulette[i]
+        #    c+= roulette[i]
         #print(c)
 
         #OBSERWATORZY
@@ -136,4 +138,5 @@ def main():
 
     print("BEST WAY THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_value())
     print("BEST route THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_route_list())
+
 main()

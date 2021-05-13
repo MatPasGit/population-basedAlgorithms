@@ -10,7 +10,7 @@ class Route:
     def objective_function(self,  problem_instance):
          value = 0
 
-         for i in range(0, len(self._route_list) - 1 ):
+         for i in range(len(self._route_list)-1):
              value += problem_instance[self._route_list[i] ][ self._route_list[i+1] ]
 
          value += problem_instance[self._route_list[len(self._route_list)-1]][self._route_list[0]]
