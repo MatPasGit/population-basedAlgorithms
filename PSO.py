@@ -62,11 +62,9 @@ class PSO():
 
         self._localBestList[0] = copy.deepcopy(self._populationList[0])
         self._globalBest = copy.deepcopy(self._populationList[0])
-        print("Najlepsza: "+str(self._globalBest))
 
         for i in range(self._size):
-            self._speedList[0][i] = round(uniform.rvs(
-                loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
+            self._speedList[0][i] = round(uniform.rvs(loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
 
         for j in range(self._population):
             if j == 0:
@@ -79,10 +77,10 @@ class PSO():
 
             if self.simplescore(self._populationList[j]) < self.simplescore(self._globalBest):
                 self._globalBest = copy.deepcopy(self._populationList[j])
-                print("Najlepsza: "+str(self._globalBest))
+                #print("Najlepsza: "+str(self._globalBest))
 
             for i in range(self._size):
-                self._speedList[0][i] = round(uniform.rvs(loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
+                self._speedList[j][i] = round(uniform.rvs(loc=self._L-self._U, scale=2*self._U-2*self._L), 5)
 
         omega = self._cl+self._cg
         self._c = 2/math.fabs(2-omega-math.sqrt(omega**2-4*omega))
@@ -109,7 +107,7 @@ class PSO():
 
                 if self.simplescore(self._populationList[j]) < self.simplescore(self._globalBest):
                     self._globalBest = copy.deepcopy(self._populationList[j])
-                    print("Najlepsza: "+str(self._globalBest))
+                    #print("Najlepsza: "+str(self._globalBest))
 
         return self._globalBest
 
@@ -143,12 +141,77 @@ cg = 4
 
 def main():
     
+    wyniki = []
+    wynikiczasowe = []
+
+
     print("Rozwiązanie problemu optymalizacji funkcji ciągłej Sphere function przy pomocy PSO")
 
-    x = PSO(n, k, iterations, cl, cg)
-    wynik = x.solve()
+    for n in range(1,16):
+        for k in [10,20]:
+            for iterations in [100,200]:
+                for cl in [2,3,4]:
+                    cg = 6-cl
 
-    print("Koniec: "+str(wynik))
-    print("Wartosc funkcji: "+str(x.simplescore(wynik)))
+                    start = time.time()
+                    x = PSO(n, k, iterations, cl, cg)
+                    wynik = x.solve()
+                    end = time.time()
+                    czas = end - start
+
+                    print("===Wynik dla n="+str(n)+", k="+str(k)+", iter="+str(iterations)+", cl="+str(cl)+", cg="+str(cg))
+                    print("Koniec: "+str(wynik))
+                    print("Wartosc funkcji: "+str(x.simplescore(wynik)))
+                    print("Czas: "+str(czas))
+
+                    wyniki.append(x.simplescore(wynik))
+                    wynikiczasowe.append(czas)
+
+
+    argumenty = np.linspace(1, 15, 15)
+
+    plt.plot(argumenty, wyniki[::12], label="k=10 - iter=100 - 2i4")
+    plt.plot(argumenty, wyniki[1::12], label="k=10 - iter=100 - 3i3")
+    plt.plot(argumenty, wyniki[2::12], label="k=10 - iter=100 - 4i2")
+    plt.plot(argumenty, wyniki[3::12], label="k=10 - iter=200 - 2i4")
+    plt.plot(argumenty, wyniki[4::12], label="k=10 - iter=200 - 3i3")
+    plt.plot(argumenty, wyniki[5::12], label="k=10 - iter=200 - 4i2")
+    plt.plot(argumenty, wyniki[6::12], label="k=20 - iter=100 - 2i4")
+    plt.plot(argumenty, wyniki[7::12], label="k=20 - iter=100 - 3i3")
+    plt.plot(argumenty, wyniki[8::12], label="k=20 - iter=100 - 4i2")
+    plt.plot(argumenty, wyniki[9::12], label="k=20 - iter=200 - 2i4")
+    plt.plot(argumenty, wyniki[10::12], label="k=20 - iter=200 - 3i3")
+    plt.plot(argumenty, wyniki[11::12], label="k=20 - iter=200 - 4i2")
+
+    plt.grid(True)
+    plt.xlabel("Liczba argumentow (n)")
+    plt.ylabel("Wynik dzialania funkcji")
+    plt.title(
+        "Wykres wyników w zależności od parametorów")
+    plt.legend()
+    plt.savefig("WykresPSOWyniki.jpg", dpi=72)
+    plt.show()
+
+    plt.plot(argumenty, wynikiczasowe[::12], label="k=10 - iter=100 - 2i4")
+    plt.plot(argumenty, wynikiczasowe[1::12], label="k=10 - iter=100 - 3i3")
+    plt.plot(argumenty, wynikiczasowe[2::12], label="k=10 - iter=100 - 4i2")
+    plt.plot(argumenty, wynikiczasowe[3::12], label="k=10 - iter=200 - 2i4")
+    plt.plot(argumenty, wynikiczasowe[4::12], label="k=10 - iter=200 - 3i3")
+    plt.plot(argumenty, wynikiczasowe[5::12], label="k=10 - iter=200 - 4i2")
+    plt.plot(argumenty, wynikiczasowe[6::12], label="k=20 - iter=100 - 2i4")
+    plt.plot(argumenty, wynikiczasowe[7::12], label="k=20 - iter=100 - 3i3")
+    plt.plot(argumenty, wynikiczasowe[8::12], label="k=20 - iter=100 - 4i2")
+    plt.plot(argumenty, wynikiczasowe[9::12], label="k=20 - iter=200 - 2i4")
+    plt.plot(argumenty, wynikiczasowe[10::12], label="k=20 - iter=200 - 3i3")
+    plt.plot(argumenty, wynikiczasowe[11::12], label="k=20 - iter=200 - 4i2")
+
+    plt.grid(True)
+    plt.xlabel("Liczba argumentow (n)")
+    plt.ylabel("Czas [s]")
+    plt.title(
+        "Wykres czasu działania w zależności od parametrów")
+    plt.legend()
+    plt.savefig("WykresPSOWynikiCzasowe.jpg", dpi=72)
+    plt.show()
 
 main()
