@@ -1,5 +1,3 @@
-
-
 class Route:
 
     _route_list = []
@@ -37,7 +35,3 @@ class Route:
 
     def increment_count(self):
         self._count += 1
-
-
-
-

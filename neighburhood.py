@@ -1,6 +1,5 @@
 import random
 
-
 def swaping(list):
     a = random.randint(0, len(list)-1)
     b= 0

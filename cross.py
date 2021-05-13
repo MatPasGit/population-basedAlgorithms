@@ -2,7 +2,6 @@ import random
 
 from Route import Route
 
-
 class Cross:
     _parent_one = []
     _parent_sec = []
