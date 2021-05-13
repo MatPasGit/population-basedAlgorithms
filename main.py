@@ -8,15 +8,23 @@ from cross import Cross
 from neighburhood import swaping, backwards
 from random import choices
 
-def main():
-    MAX_CHANGE_LIMIT = 10
-    ITERATIONS = 50000
-    PROBLEM_SIZE = 5
-    SEED = 20
-    PROBLEM_MATRIX = instanceGenerator(SEED, PROBLEM_SIZE)
-    BEES_AMOUNT = 5
-    CROSS_POINTS = 2
+import time
+import numpy as np
+from matplotlib import cm
+import matplotlib.pyplot as plt
+from scipy.stats import uniform
 
+def main(iterations, problem_size, bees_amount):
+    MAX_CHANGE_LIMIT = 20
+    CROSS_POINTS = 2
+    SEED = 20
+
+    ITERATIONS = iterations
+    PROBLEM_SIZE = problem_size
+    BEES_AMOUNT = bees_amount
+    
+    PROBLEM_MATRIX = instanceGenerator(SEED, PROBLEM_SIZE)
+    
     #INIT SOLUTION
     init_list = []
     for i in range(0, PROBLEM_SIZE):
@@ -42,7 +50,6 @@ def main():
     while loop < ITERATIONS:
         loop += 1
 
-
     #ZBIERACZE
         for i in range(0, len(BEES_LIST)):
             child = None
@@ -64,7 +71,7 @@ def main():
                 BEES_LIST[i] = copy.deepcopy(new_solution)
                 if new_solution.get_value() > BEST_SOLUTION.get_value():
                     BEST_SOLUTION = copy.deepcopy(new_solution)
-                    print("NEW BEST")
+                    #print("NEW BEST")
             else:
                 BEES_LIST[i].increment_count()
                 if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:     ##ABOVE MAX CHANGE COUNT (Nowy osobnik do populacji)
@@ -110,7 +117,7 @@ def main():
                     BEES_LIST[i] = copy.deepcopy(x)
                     if x.get_value() > BEST_SOLUTION.get_value():
                         BEST_SOLUTION = copy.deepcopy(x)
-                        print("NEW BEST")
+                        #print("NEW BEST")
                 else:
                     BEES_LIST[i].increment_count()
                     if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:  ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
@@ -125,7 +132,7 @@ def main():
                     BEES_LIST[i] = copy.deepcopy(x)
                     if x.get_value() > BEST_SOLUTION.get_value():
                         BEST_SOLUTION = copy.deepcopy(x)
-                        print("NEW BEST")
+                        #print("NEW BEST")
                 else:
                     BEES_LIST[i].increment_count()
                     if BEES_LIST[i].get_count() > MAX_CHANGE_LIMIT:  ##ABOVE MAX CHANGE COUNT (Nowy osobnik do poplacji)
@@ -137,6 +144,64 @@ def main():
         BEES_LIST.sort(key=operator.attrgetter('_value'))
 
     print("BEST WAY THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_value())
-    print("BEST route THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_route_list())
+    print("BEST ROUTE THAT HAS BEEN FINDED: ", BEST_SOLUTION.get_route_list())
+    return BEST_SOLUTION.get_value()
 
-main()
+
+wyniki = []
+wynikiczasowe = []
+
+tempIterations = 1500
+tempProblemSize = 5
+tempBeesAmount = 100
+
+for tempProblemSize in range(5, 26):
+    for tempBeesAmount in [30, 70, 100]:
+        for tempIterations in [500, 1000, 1500]:
+        
+            start = time.time()
+            wynik = main(tempIterations, tempProblemSize, tempBeesAmount)
+            end = time.time()
+            czas = end - start
+
+            print("===Wynik dla n="+str(tempProblemSize)+", bees="+str(tempBeesAmount)+", iter="+str(tempIterations))
+            wyniki.append(wynik)
+            wynikiczasowe.append(czas)
+
+argumenty = np.linspace(1, 21, 21)
+
+plt.plot(argumenty, wyniki[::9], label="bees=30 - iter=500")
+plt.plot(argumenty, wyniki[1::9], label="bees=30 - iter=1000")
+plt.plot(argumenty, wyniki[2::9], label="bees=30 - iter=1500")
+plt.plot(argumenty, wyniki[3::9], label="bees=70 - iter=500")
+plt.plot(argumenty, wyniki[4::9], label="bees=70 - iter=1000")
+plt.plot(argumenty, wyniki[5::9], label="bees=70 - iter=1500")
+plt.plot(argumenty, wyniki[6::9], label="bees=100 - iter=500")
+plt.plot(argumenty, wyniki[7::9], label="bees=100 - iter=1000")
+plt.plot(argumenty, wyniki[8::9], label="bees=100 - iter=1500")
+
+plt.grid(True)
+plt.xlabel("Liczba argumentow (n)")
+plt.ylabel("Wynik trasy")
+plt.title("Wykres wyników w zależności od parametorów")
+plt.legend()
+plt.savefig("WykresABCWyniki.jpg", dpi=72)
+plt.show()
+
+plt.plot(argumenty, wynikiczasowe[::9], label="bees=30 - iter=500")
+plt.plot(argumenty, wynikiczasowe[1::9], label="bees=30 - iter=1000")
+plt.plot(argumenty, wynikiczasowe[2::9], label="bees=30 - iter=1500")
+plt.plot(argumenty, wynikiczasowe[3::9], label="bees=70 - iter=500")
+plt.plot(argumenty, wynikiczasowe[4::9], label="bees=70 - iter=1000")
+plt.plot(argumenty, wynikiczasowe[5::9], label="bees=70 - iter=1500")
+plt.plot(argumenty, wynikiczasowe[6::9], label="bees=100 - iter=500")
+plt.plot(argumenty, wynikiczasowe[7::9], label="bees=100 - iter=1000")
+plt.plot(argumenty, wynikiczasowe[8::9], label="bees=100 - iter=1500")
+
+plt.grid(True)
+plt.xlabel("Liczba argumentow (n)")
+plt.ylabel("Czas [s]")
+plt.title("Wykres czasu działania w zależności od parametrów")
+plt.legend()
+plt.savefig("WykresABCWynikiCzasowe.jpg", dpi=72)
+plt.show()

@@ -15,7 +15,7 @@ def backwards(list):
 
     a = random.randint(0, len(list)-1)
     b = 0
-    while math.fabs(a-b) <= 2:
+    while math.fabs(a-b) <= 1:
         b = random.randint(0, len(list)-1)
 
     if (a<b):
