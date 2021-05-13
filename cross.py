@@ -18,12 +18,11 @@ class Cross:
     def OX_cross(self):
         allels = self._cross_points + 1
         allels = int( len(self._parent_one)/allels) +1
-        print("ALLELS : ", allels)
+
 
         child=[]
 
-        luck = random.randint(0, 1)
-        print(luck)             #losowanie chromosomu
+        luck = random.randint(0, 1)            #losowanie chromosomu
         if luck == 0:
             for i in range(0, allels):
                 child.append(self._parent_one[i])
