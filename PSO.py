@@ -9,7 +9,7 @@ from RandomNumberGenerator import *
 from scipy.stats import uniform
 
 # Wartość współczynnika bezwładności (w) wpływa na zdolność cząstek do zachowania poprzedniej prędkości.
-# #Wraz ze wzrostem wartości tego parametru, zwiększa się zdolność cząstek do przeszukiwania nowych rejonów przestrzeni rozwiązań.
+# Wraz ze wzrostem wartości tego parametru, zwiększa się zdolność cząstek do przeszukiwania nowych rejonów przestrzeni rozwiązań.
 # Wzór -> w=1-aktualnaIteracja/maxLiczbaIteracji
 
 # c - tempo uczenia (od 0 do 1) (nazywane współczynnikiem ścisku)
@@ -120,11 +120,11 @@ iterations = 1000        #liczba iteracji
 
 #PARAMETRY
 
-#Współczynnik dążenia do najlepszego lokalnego rozwiązania (ol)
+#Współczynnik dążenia do najlepszego lokalnego rozwiązania (ol) (cl)
 #Im większa wartość tego parametru tym większa skłonność cząstki do oscylacji wokół swojej najlepszej pozycji.
 cl = 2
 
-#Współczynnik dążenia do najlepszego globalnego rozwiązania (og) 
+#Współczynnik dążenia do najlepszego globalnego rozwiązania (og) (cg)
 #Zwiększanie wartości tego parametru powoduje zwiększenie tendencji do grupowania się cząstek wokół najlepszego globalnego rozwiązania.
 cg = 4
 

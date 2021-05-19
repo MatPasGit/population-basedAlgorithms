@@ -91,7 +91,7 @@ def main(iterations, problem_size, bees_amount):
 
         for i in range(len(BEES_LIST)):
             b = BEES_LIST[len(BEES_LIST)-1].get_value() - BEES_LIST[i].get_value()
-            roulette.append(( b /probablility) )    #NAPRAWIC KOLO RULETKI
+            roulette.append(( b /probablility) )   
 
         #print("ROULETTE: ", roulette)
         #c = 0
